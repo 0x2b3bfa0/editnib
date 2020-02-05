@@ -1,36 +1,34 @@
 #!/bin/bash
 
-set -e
+extract() {
+  bundle="$1"
+  temporal="$(mktemp)"
+  
+  mv "$bundle" "$temporal"
+  mkdir -p "$bundle"
+  mv "$temporal" "$bundle/keyedobjects.nib"
 
-if [[ -z "$1" ]] ; then
-  echo "usage: $0 file.nib"
+  for file in info classes; do
+    defaults write "$bundle/$file" nothing nothing
+    defaults delete "$bundle/$file"
+    mv "$bundle/$file".{plist,nib}
+  done
+}
+
+if [[ $# < 1 ]]; then
+  echo "Usage: $0 file.nib"
   exit 1
 fi
 
-# set -x
-
-for arg in $@
-do
-  nib="$arg"
-  if [[ ! "$nib" = /* ]] ; then # make absolute
-    nib="$(pwd)"/"$nib"
+for path in "$@"; do
+  if [[ -f "$path" ]]; then
+    extract "$path"
+    echo "$path was successfully extracted."
+  elif [[ -d "$path" ]]; then
+    echo "$path is already a bundle; skipping..."
+  elif [[ ! -w "$path" ]]; then
+    echo "$path is not writeable."
+  else
+    echo "$path does not seem to exist."
   fi
-  dir="$(dirname "$arg")"
-
-  if [[ -d "$nib" ]] ; then
-    echo "$arg is already a bundle"
-    continue
-  fi
-
-
-  mv "$nib" "$nib"-"$$"
-  mkdir -p "$nib"
-  mv "$nib"-"$$" "$nib"/keyedobjects.nib
-
-  for file in info classes
-  do
-    defaults write "$nib"/"$file" nothing nothing
-    defaults delete "$nib"/"$file"
-    mv "$nib"/"$file".plist "$nib"/"$file".nib
-  done
 done
