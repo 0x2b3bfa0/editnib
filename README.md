@@ -9,7 +9,3 @@ Simple script to convert (not really) *compiled* NIB files into their editable c
 ## Bibliography
 - http://hints.macworld.com/article.php?story=20081121083323825
 - http://mactips.lotsaoxen.com/2010/11/how-to-open-compiled-nib-files-in-snow.html
-
-## Contributing
-
-Feel free to contribute!
