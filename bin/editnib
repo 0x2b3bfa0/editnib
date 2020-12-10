@@ -22,7 +22,7 @@ fi
 
 for path in "$@"; do
   if [[ -f "$path" ]]; then
-    extract "$path"
+    extract "$(realpath "$path")"
     echo "$path was successfully extracted."
   elif [[ -d "$path" ]]; then
     echo "$path is already a bundle; skipping..."
